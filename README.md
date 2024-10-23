@@ -1,6 +1,27 @@
 # Dotfiles
 
-Personal dotfiles managed with chezmoi.
+These are my dotfiles.
+
+This is for a WSL2 environment that utilizes the following:
+
+* Windows 11
+* Ubuntu 22.04.3 LTS
+   * [Nix][nixos.org]
+   * [home-manager][home-manager manual].
+
+
+## Setup Notes
+
+For wsl for linux, it's best to have `/etc/wsl.conf` with the following [configuration](https://learn.microsoft.com/en-us/windows/wsl/wsl-config):
+
+```
+[automount]
+enabled = true
+root = /windir/
+
+[boot]
+systemd=true
+```
 
 ## Initial Setup
 
@@ -150,3 +171,7 @@ If you encounter any issues:
    ```bash
    chezmoi unmanage ~/.config/some-config-file
    ```
+
+
+[nixos.org]: https://nixos.org/
+[home-manager manual]: https://nix-community.github.io/home-manager/
