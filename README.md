@@ -40,36 +40,6 @@ chmod +x install.sh
 
 > Note: The `chmod +x` command makes the script executable. This is necessary because files created in Windows/VSCode environments may not have execute permissions by default.
 
-### SSH Key Setup
-Required for pushing changes to GitHub. If you only need to pull/clone, you can skip this initially.
-
-1. Generate a new SSH key:
-   ```bash
-   ssh-keygen -t ed25519 -C "witandcharm@gmail.com"
-   ```
-   - Press Enter to accept the default file location
-   - Enter a secure passphrase when prompted
-
-2. Start the ssh-agent:
-   ```bash
-   eval "$(ssh-agent -s)"
-   ```
-
-3. Add your SSH key to the ssh-agent:
-   ```bash
-   ssh-add ~/.ssh/id_ed25519
-   ```
-
-4. Copy your SSH public key:
-   ```bash
-   cat ~/.ssh/id_ed25519.pub
-   ```
-
-5. Add the key to your GitHub account:
-   - Go to GitHub → Settings → SSH and GPG keys
-   - Click "New SSH key"
-   - Paste your key and save
-
 ### After Install Todo
 
 #### WSL Specific

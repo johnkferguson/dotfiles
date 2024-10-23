@@ -108,6 +108,34 @@ if ! home-manager switch --flake .#$USER; then
     exit 1
 fi
 
+print_section "SSH Key Setup"
+log "INFO" "Would you like to set up an SSH key for GitHub? (y/N)"
+read -p "$(echo -e ${BOLD}"(y/N) "${NC})" -n 1 -r
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    log "INFO" "Please enter your GitHub email address:"
+    read -p "$(echo -e ${BOLD}"Email: "${NC})" github_email
+
+    log "INFO" "Generating SSH key..."
+    ssh-keygen -t ed25519 -C "$github_email"
+
+    log "INFO" "Starting ssh-agent..."
+    eval "$(ssh-agent -s)"
+
+    log "INFO" "Adding SSH key to agent..."
+    ssh-add ~/.ssh/id_ed25519
+
+    log "INFO" "Your public SSH key:"
+    cat ~/.ssh/id_ed25519.pub
+
+    log "INFO" "To complete setup:"
+    log "INFO" "1. Copy the above public key"
+    log "INFO" "2. Go to GitHub → Settings → SSH and GPG keys"
+    log "INFO" "3. Click 'New SSH key'"
+    log "INFO" "4. Paste your key and save"
+fi
+
 print_section "Installation Complete"
 log "INFO" "Installation completed successfully! 🎉"
 log "INFO" "Start a new shell session or run: source ~/.profile"
