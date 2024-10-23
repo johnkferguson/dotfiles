@@ -9,7 +9,6 @@ This is for a WSL2 environment that utilizes the following:
    * [Nix][nixos.org]
    * [home-manager][home-manager manual].
 
-
 ## Initial Setup
 
 ### Clone Options
@@ -41,19 +40,6 @@ chmod +x install.sh
 > Note: The `chmod +x` command makes the script executable. This is necessary because files created in Windows/VSCode environments may not have execute permissions by default.
 
 ### After Install Todo
-
-#### WSL Specific
-
-For wsl for linux, it's best to have `/etc/wsl.conf` with the following [configuration](https://learn.microsoft.com/en-us/windows/wsl/wsl-config):
-
-```
-[automount]
-enabled = true
-root = /windir/
-
-[boot]
-systemd=true
-```
 
 ## Directory Structure
 

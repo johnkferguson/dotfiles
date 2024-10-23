@@ -100,7 +100,7 @@ export NIX_PATH=$NIX_PATH:$HOME/.nix-defexpr/channels
 log "INFO" "Installing Home Manager..."
 nix profile install home-manager || handle_error ${LINENO} hm_install
 
-print_section "Configuration Application"
+print_section "Home Manager Configuration"
 log "INFO" "Applying Home Manager configuration..."
 if ! home-manager switch --flake .#$USER; then
     handle_error ${LINENO} apply
@@ -134,6 +134,46 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     log "INFO" "2. Go to GitHub → Settings → SSH and GPG keys"
     log "INFO" "3. Click 'New SSH key'"
     log "INFO" "4. Paste your key and save"
+fi
+
+print_section "WSL Configuration"
+log "INFO" "Would you like to create an optimized WSL configuration? (y/N)"
+read -p "$(echo -e ${BOLD}"(y/N) "${NC})" -n 1 -r
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    log "INFO" "Creating WSL configuration..."
+    sudo tee /etc/wsl.conf > /dev/null << 'EOF'
+# Windows drives mounting configuration
+[automount]
+# Automatically mount Windows drives
+enabled = true
+# Mount drives to /windir/ instead of /mnt/
+root = /windir/
+# Enable Linux file system metadata and set default file permissions
+options = "metadata,uid=1000,gid=1000,umask=022,fmask=11"
+
+# Enable systemd for modern Linux service management
+[boot]
+systemd = true
+
+# Network configuration for WSL
+[network]
+# Auto-generate resolv.conf for DNS resolution
+generateResolvConf = true
+# Auto-generate hosts file
+generateHosts = true
+
+# Windows interoperability settings
+[interop]
+# Allow execution of Windows binaries
+enabled = true
+# Include Windows PATH in WSL environment
+appendWindowsPath = true
+EOF
+
+    log "INFO" "WSL configuration created. Changes will take effect after WSL restart"
+    log "INFO" "To apply changes, run 'wsl --shutdown' from PowerShell after installation"
 fi
 
 print_section "Installation Complete"
