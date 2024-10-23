@@ -10,32 +10,35 @@ This is for a WSL2 environment that utilizes the following:
    * [home-manager][home-manager manual].
 
 
-## Setup Notes
-
-For wsl for linux, it's best to have `/etc/wsl.conf` with the following [configuration](https://learn.microsoft.com/en-us/windows/wsl/wsl-config):
-
-```
-[automount]
-enabled = true
-root = /windir/
-
-[boot]
-systemd=true
-```
-
 ## Initial Setup
 
 ### Clone Options
 
 HTTPS (requires GitHub credentials):
 ```bash
-git clone https://github.com/johnkferguson/dotfiles.git ~/dotfiles
+git clone https://github.com/johnkferguson/.dotfiles.git ~/dotfiles
 ```
 
 SSH (requires SSH key setup):
 ```bash
-git clone git@github.com:johnkferguson/dotfiles.git ~/dotfiles
+git clone git@github.com:johnkferguson/dotfiles.git ~/.dotfiles
 ```
+
+### Installation
+
+After cloning the repository:
+```bash
+# Change to dotfiles directory
+cd ~/.dotfiles
+
+# Make install script executable
+chmod +x install.sh
+
+# Run the install script
+./install.sh
+```
+
+> Note: The `chmod +x` command makes the script executable. This is necessary because files created in Windows/VSCode environments may not have execute permissions by default.
 
 ### SSH Key Setup
 Required for pushing changes to GitHub. If you only need to pull/clone, you can skip this initially.
@@ -72,7 +75,7 @@ Required for pushing changes to GitHub. If you only need to pull/clone, you can 
 After cloning the repository:
 ```bash
 # Change to dotfiles directory
-cd ~/dotfiles
+cd ~/.dotfiles
 
 # Make install script executable
 chmod +x install.sh
@@ -83,95 +86,29 @@ chmod +x install.sh
 
 > Note: The `chmod +x` command makes the script executable. This is necessary because files created in Windows/VSCode environments may not have execute permissions by default.
 
-## What Gets Installed
+### After Install Todo
 
-The installation script will:
-1. Install chezmoi if not already present
-2. Initialize chezmoi with configurations from this repository
-3. Apply the following configurations:
-   - Git configuration (user name, email, default branch, etc.)
-   - [Additional configurations to be listed as they're added]
+#### WSL Specific
+
+For wsl for linux, it's best to have `/etc/wsl.conf` with the following [configuration](https://learn.microsoft.com/en-us/windows/wsl/wsl-config):
+
+```
+[automount]
+enabled = true
+root = /windir/
+
+[boot]
+systemd=true
+```
 
 ## Directory Structure
 
 ```
-# Repository structure (how files are stored in chezmoi)
+# Repository structure
 dotfiles/
 ├── README.md
 ├── install.sh
-└── dot_config/        # Will become ~/.config in your home directory
-    └── git/
-        └── config    # Will become ~/.config/git/config
 ```
-
-## How Chezmoi Works
-
-### File Organization
-- Files in the repository are stored with special prefixes (like `dot_`)
-- Chezmoi automatically transforms these when installing:
-  - `dot_config/git/config` → `~/.config/git/config`
-  - `dot_bashrc` → `~/.bashrc`
-
-### Adding New Files
-To add an existing config file to chezmoi's management:
-```bash
-# Example: Adding your bash configuration
-chezmoi add ~/.bashrc
-# This will copy ~/.bashrc to the chezmoi directory as dot_bashrc
-
-# Example: Adding a config file
-chezmoi add ~/.config/git/config
-# This will copy the file to chezmoi's directory as dot_config/git/config
-```
-
-## Managing Your Dotfiles
-
-### Updating Configurations
-After making changes to your configurations:
-```bash
-chezmoi apply
-```
-
-### Checking Changes
-To see what changes chezmoi would make:
-```bash
-chezmoi diff
-```
-
-### Edit Files
-To edit a file managed by chezmoi:
-```bash
-chezmoi edit ~/.bashrc
-```
-
-### Adding New Files
-To add a new file to be managed by chezmoi:
-```bash
-chezmoi add ~/.config/some-config-file
-```
-
-### Getting Updates
-To pull the latest changes from your repository:
-```bash
-chezmoi update
-```
-
-## Troubleshooting
-
-If you encounter any issues:
-1. Check the status of chezmoi:
-   ```bash
-   chezmoi doctor
-   ```
-2. View what changes would be made:
-   ```bash
-   chezmoi diff
-   ```
-3. Reset changes if needed:
-   ```bash
-   chezmoi unmanage ~/.config/some-config-file
-   ```
-
 
 [nixos.org]: https://nixos.org/
 [home-manager manual]: https://nix-community.github.io/home-manager/
