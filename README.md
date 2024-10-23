@@ -70,22 +70,6 @@ Required for pushing changes to GitHub. If you only need to pull/clone, you can 
    - Click "New SSH key"
    - Paste your key and save
 
-## Installation
-
-After cloning the repository:
-```bash
-# Change to dotfiles directory
-cd ~/.dotfiles
-
-# Make install script executable
-chmod +x install.sh
-
-# Run the install script
-./install.sh
-```
-
-> Note: The `chmod +x` command makes the script executable. This is necessary because files created in Windows/VSCode environments may not have execute permissions by default.
-
 ### After Install Todo
 
 #### WSL Specific
