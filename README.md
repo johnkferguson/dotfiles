@@ -30,7 +30,7 @@ ubuntu
 
 HTTPS (requires GitHub credentials):
 ```bash
-git clone https://github.com/johnkferguson/.dotfiles.git ~/dotfiles
+git clone https://github.com/johnkferguson/dotfiles.git ~/dotfiles
 ```
 
 SSH (requires SSH key setup):
