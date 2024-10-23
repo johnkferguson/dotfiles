@@ -13,6 +13,10 @@ if [ ! -f "$CHEZMOI_BIN" ]; then
     sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
 fi
 
+# Create required directory structure
+echo "Creating directory structure..."
+mkdir -p ~/.config/git
+
 # Initialize chezmoi with the repository directory, using full path
 echo "Initializing chezmoi..."
 "$CHEZMOI_BIN" init --source="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" --force --apply
