@@ -1,0 +1,65 @@
+# Check if shell is interactive (like a terminal session)
+# If not interactive (like in scripts), exit early to prevent running unnecessary setup
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# Add personal bin directory to PATH
+# This allows you to run programs in ~/.local/bin from anywhere
+export PATH="$HOME/.local/bin:$PATH"
+
+# History control settings
+# ignoreboth combines:
+# - ignorespace: don't save commands that start with a space
+# - ignoredups: don't save duplicate commands
+HISTCONTROL=ignoreboth
+
+# Set history size limits
+# HISTSIZE: number of commands stored in memory
+# HISTFILESIZE: number of commands stored in history file
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# When closing a terminal, append its history to ~/.bash_history
+# Without this, the last terminal closed would overwrite the history
+shopt -s histappend
+
+# Update window size values after each command
+# Ensures proper text wrapping and display
+shopt -s checkwinsize
+
+# Configure less to handle non-text files
+# Enables viewing of compressed files, images, etc.
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# Set up color support for ls, grep, and their variants
+# Only enabled if dircolors is available
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# Define common ls aliases
+# ll: list all files in long format
+# la: list all files except . and ..
+# l: list files in columns
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Enable programmable completion features
+# Loads completion scripts for:
+# - Commands
+# - File names
+# - Command line arguments
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
