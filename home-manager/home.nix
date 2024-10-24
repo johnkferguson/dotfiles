@@ -1,4 +1,3 @@
-
 { lib, pkgs, ... }:
 {
   home = {
@@ -8,8 +7,8 @@
       git
     ];
 
-    username = builtins.getEnv "USER";
-    homeDirectory = "/home/${builtins.getEnv "USER"}";
+    username = "jkf";
+    homeDirectory = "/home/jkf";
 
     # Don't ever change this after the first build.
     # It tells home-manager what the original state schema

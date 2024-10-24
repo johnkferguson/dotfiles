@@ -73,12 +73,6 @@ if command -v nix >/dev/null; then
         log "INFO" "Current version: $nix_version, Recommended: ≥2.18.0"
     fi
 else
-    # Backup any existing profile
-    if [ -f ~/.profile ]; then
-        log "INFO" "Backing up existing profile..."
-        cp ~/.profile ~/.profile.backup-"$(date +%Y%m%d-%H%M%S)"
-    fi
-
     log "INFO" "Installing Nix..."
     sh <(curl -L https://nixos.org/nix/install) --daemon || handle_error ${LINENO} nix_install
 
@@ -89,8 +83,6 @@ else
     # Source Nix using the multi-user daemon path
     if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
         . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-    elif [ -f ~/.nix-profile/etc/profile.d/nix.sh ]; then
-        . ~/.nix-profile/etc/profile.d/nix.sh
     else
         log "ERROR" "Nix installation completed but profile script not found"
         exit 1
@@ -100,27 +92,17 @@ fi
 print_section "Flakes Setup"
 log "INFO" "Enabling flakes..."
 mkdir -p ~/.config/nix
-echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-
-print_section "Home Manager Installation"
-log "INFO" "Adding required channels..."
-nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs || handle_error ${LINENO} channel
-nix-channel --update || handle_error ${LINENO} channel
-
-# Set NIX_PATH
-export NIX_PATH=$NIX_PATH:$HOME/.nix-defexpr/channels
-
-log "INFO" "Installing Home Manager..."
-nix profile install home-manager || handle_error ${LINENO} hm_install
+if ! grep -q "experimental-features = nix-command flakes" ~/.config/nix/nix.conf 2>/dev/null; then
+    echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+fi
+export NIX_CONFIG="experimental-features = nix-command flakes"
 
 print_section "Home Manager Configuration"
-log "INFO" "Applying Home Manager configuration..."
-if [ ! -f "./home-manager/flake.nix" ]; then
-    log "ERROR" "flake.nix not found in home-manager directory"
-    exit 1
-fi
+log "INFO" "Creating Home Manager state directory..."
+mkdir -p ~/.local/state/home-manager
 
-if ! home-manager switch --flake ./home-manager#$USER; then
+log "INFO" "Applying Home Manager configuration..."
+if ! nix run home-manager -- switch --flake ./home-manager#jkf; then
     handle_error ${LINENO} apply
     log "INFO" "You can try running 'home-manager switch --show-trace' for more detailed error information"
     exit 1
