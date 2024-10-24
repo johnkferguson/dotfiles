@@ -63,7 +63,16 @@ if [ ! -f "home-manager/home.nix" ]; then
 fi
 
 print_section "Nix Installation"
-if ! command -v nix >/dev/null; then
+if command -v nix >/dev/null; then
+    # Check Nix version (assuming we want 2.18.0 or higher)
+    nix_version=$(nix --version | cut -d' ' -f3)
+    if [[ $(echo -e "2.18.0\n$nix_version" | sort -V | head -n1) == "2.18.0" ]]; then
+        log "INFO" "Nix version $nix_version is already installed and up to date"
+    else
+        log "WARN" "Nix version $nix_version is installed but may be outdated"
+        log "INFO" "Current version: $nix_version, Recommended: ≥2.18.0"
+    fi
+else
     # Backup any existing profile
     if [ -f ~/.profile ]; then
         log "INFO" "Backing up existing profile..."
@@ -73,15 +82,19 @@ if ! command -v nix >/dev/null; then
     log "INFO" "Installing Nix..."
     sh <(curl -L https://nixos.org/nix/install) --daemon || handle_error ${LINENO} nix_install
 
-    # Source Nix
-    if [ -f ~/.nix-profile/etc/profile.d/nix.sh ]; then
+    # Wait for the Nix daemon to start
+    sleep 2
+    sudo systemctl restart nix-daemon.service
+
+    # Source Nix using the multi-user daemon path
+    if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    elif [ -f ~/.nix-profile/etc/profile.d/nix.sh ]; then
         . ~/.nix-profile/etc/profile.d/nix.sh
     else
         log "ERROR" "Nix installation completed but profile script not found"
         exit 1
     fi
-else
-    log "INFO" "Nix is already installed"
 fi
 
 print_section "Flakes Setup"
@@ -102,7 +115,12 @@ nix profile install home-manager || handle_error ${LINENO} hm_install
 
 print_section "Home Manager Configuration"
 log "INFO" "Applying Home Manager configuration..."
-if ! home-manager switch --flake .#$USER; then
+if [ ! -f "./home-manager/flake.nix" ]; then
+    log "ERROR" "flake.nix not found in home-manager directory"
+    exit 1
+fi
+
+if ! home-manager switch --flake ./home-manager#$USER; then
     handle_error ${LINENO} apply
     log "INFO" "You can try running 'home-manager switch --show-trace' for more detailed error information"
     exit 1
