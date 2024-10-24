@@ -31,7 +31,7 @@ To install via the Microsoft Store, search for "Ubuntu" in the Microsoft Store. 
 2. Next, clone the repository and run the install script:
 
 ```bash
-git clone https://github.com/johnkferguson/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && chmod +x install.sh && ./install.sh
+git clone https://github.com/johnkferguson/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && chmod +x bootstrap.sh && ./bootstrap.sh
 ```
 
 3. Follow the prompts within the install script.
